@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عدّي الكلمة بس ماتقولهاش 🤫</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- شاشة البداية -->
+    <div id="screen-start" class="screen active">
+        <div class="container">
+            <div class="logo-area">
+                <div class="emoji-big">🤫</div>
+                <h1 class="game-title">عدّي الكلمة<br><span class="highlight">بس ماتقولهاش!</span></h1>
+                <p class="subtitle">اللعبة اللي هتخليك تتلخبط وتضحك 😂</p>
+            </div>
+
+            <div class="setup-section">
+                <div class="input-group">
+                    <label>👥 عدد اللاعبين</label>
+                    <div class="player-count-control">
+                        <button class="btn-circle" onclick="changePlayerCount(-1)">−</button>
+                        <span id="player-count-display">2</span>
+                        <button class="btn-circle" onclick="changePlayerCount(1)">+</button>
+                    </div>
+                </div>
+
+                <div id="player-names-area" class="input-group">
+                    <label>✏️ أسماء اللاعبين</label>
+                    <div id="names-inputs"></div>
+                </div>
+
+                <div class="input-group">
+                    <label>🔄 عدد الجولات</label>
+                    <div class="options-row">
+                        <button class="option-btn" data-rounds="3" onclick="selectRounds(3)">3</button>
+                        <button class="option-btn selected" data-rounds="5" onclick="selectRounds(5)">5</button>
+                        <button class="option-btn" data-rounds="7" onclick="selectRounds(7)">7</button>
+                        <button class="option-btn" data-rounds="10" onclick="selectRounds(10)">10</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>⏱️ وقت كل لاعب</label>
+                    <div class="options-row">
+                        <button class="option-btn" data-time="30" onclick="selectTime(30)">30 ثانية</button>
+                        <button class="option-btn selected" data-time="60" onclick="selectTime(60)">60 ثانية</button>
+                        <button class="option-btn" data-time="90" onclick="selectTime(90)">90 ثانية</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-start" onclick="startGame()">🎮 ابدأ اللعبة!</button>
+        </div>
+    </div>
+
+    <!-- شاشة تسليم الدور -->
+    <div id="screen-handoff" class="screen">
+        <div class="container handoff-container">
+            <div class="emoji-big">🎯</div>
+            <h2 class="handoff-title">دور مين دلوقتي؟</h2>
+            <div id="current-player-name" class="player-name-display"></div>
+            <p class="handoff-hint">سلّم الموبايل/الكمبيوتر للاعب ده 📱<br>هيطلعله كلمة واحدة يوصفها قبل الوقت ما يخلص!<br>يضغط جاهز لما يكون مستعد ✋</p>
+            <div class="round-info">
+                <span>🔄 الجولة: <strong id="handoff-round"></strong></span>
+                <span>⭐ النقاط: <strong id="handoff-score"></strong></span>
+            </div>
+            <button class="btn-ready" onclick="showWord()">✋ أنا جاهز!</button>
+        </div>
+    </div>
+
+    <!-- شاشة اللعب -->
+    <div id="screen-play" class="screen">
+        <div class="container play-container">
+            <div class="play-header">
+                <div class="timer-area">
+                    <div id="timer-ring" class="timer-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle class="timer-bg" cx="60" cy="60" r="54"/>
+                            <circle id="timer-circle" class="timer-fg" cx="60" cy="60" r="54"/>
+                        </svg>
+                        <span id="timer-text" class="timer-text">60</span>
+                    </div>
+                </div>
+                <div class="player-info-bar">
+                    <span id="play-player-name" class="play-player"></span>
+                    <span id="play-score" class="play-score">⭐ 0</span>
+                </div>
+            </div>
+
+            <div class="word-card">
+                <div class="word-label">🎯 الكلمة المطلوبة</div>
+                <div id="main-word" class="main-word"></div>
+                <div class="forbidden-label">🚫 ممنوع تقول</div>
+                <div id="forbidden-words" class="forbidden-list"></div>
+            </div>
+
+            <div class="action-buttons single-word-mode">
+                <button class="btn-correct" onclick="correctAnswer()">✅ وصّلها صح!</button>
+                <button class="btn-wrong" onclick="wrongAnswer()">❌ قال الممنوع!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة نتائج الجولة -->
+    <div id="screen-round-result" class="screen">
+        <div class="container">
+            <div class="emoji-big">📊</div>
+            <h2 class="result-title" id="round-result-title">نتيجة الجولة</h2>
+            <div id="round-scoreboard" class="scoreboard"></div>
+            <button class="btn-next-round" id="btn-next" onclick="nextRound()">🔄 الجولة الجاية!</button>
+        </div>
+    </div>
+
+    <!-- شاشة النتيجة النهائية -->
+    <div id="screen-final" class="screen">
+        <div class="container">
+            <div class="confetti-area" id="confetti-area"></div>
+            <div class="emoji-big">🏆</div>
+            <h2 class="final-title">انتهت اللعبة!</h2>
+            <div id="winner-announce" class="winner-announce"></div>
+            <div id="final-scoreboard" class="scoreboard"></div>
+            <button class="btn-start" onclick="resetGame()">🔁 نلعب تاني!</button>
+        </div>
+    </div>
+
+    <!-- تنبيه منبثق -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
